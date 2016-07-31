@@ -40,7 +40,22 @@ document.addEventListener "DOMContentLoaded", (e) ->
 	render_jqcb = () ->
 		# NOTICE !!! not reload page on submit forms
 		$('form').submit((e) -> e.preventDefault())
+	render_datepair = () ->
+		datepair = document.getElementById('datepair')
+		if not(datepair) then (state.datepair = false)
+		if not(state.datepair) and datepair
+			$('#datepair .time').timepicker(timepicker_opts)
+			$('#datepair .date').datepicker(datepicker_opts)
+			state.datepair = new Datepair(datepair, {defaultTimeDelta: 10800000, defaultDateDelta: 7})
+			$('#datepair').on('rangeSelected', () -> utils.new_datepairval(state))
+			$('#datepair').on('rangeError', () -> utils.new_datepairval(state))
+			$('#datepair').on('rangeIncomplete', () -> utils.new_datepairval(state))
+			console.log("render datepair")
+			await utils.render(defer dummy)
+			$('#datepair .date.start').datepicker('setDate', (new Date()))
+			dummy
 	render = (cb) ->
+		render_datepair()
 		render_tooltips()
 		render_jqcb()
 		$('.selectpicker').selectpicker({noneSelectedText: "ничего не выбрано"})
@@ -66,6 +81,7 @@ document.addEventListener "DOMContentLoaded", (e) ->
 		rooms_of_locations: {}, # just dict room_id => location_id
 		request_template: false,
 		response_state: false,
+		datepair: false,
 		datepairval: {
 			date: {start: '', end: ''},
 			time: {start: '', end: ''}

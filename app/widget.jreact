@@ -40,11 +40,32 @@ mixin select_room_location()
 mixin navbar()
 	div.container-fluid
 		div.row.text-center
-			+select_room_location()
+			div.form-inline(id="datepair")
+				input.form-control.input-lg.ml.mt.date.start(type="text" placeholder="дата начала")
+				input.form-control.input-lg.ml.mt.time.start(type="text" placeholder="время начала")
+				input.form-control.input-lg.ml.mt.time.end(type="text" placeholder="время окончания")
+				input.form-control.input-lg.ml.mt.date.end(type="text" placeholder="дата окончания")
+				+select_room_location()
+mixin location_content(location)
+	table.table.table-bordered.table-hover.text-center
+		tbody
+			each room in state.response_state.rooms.filter(function(el){return (el.location_id.compare(location.id) == 0);})
+				tr
+					td
+						div.deg90.bigtxt= room.name
+					td
+						div= "hello"
 mixin main()
-	div.container-fluid
-		div.row.mt
-			div.col-xs-12
+	if state.response_state
+		div.container-fluid.mt
+			table.table.table-bordered.table-hover.text-center
+				tbody
+					each location in state.response_state.locations
+						tr
+							td
+								div.deg90.bigtxt= location.name
+							td
+								+location_content(location)
 //
 //	CONTENT
 //

@@ -35,3 +35,10 @@ module.exports =
 		if (ev? and ev.target? and ev.target.value?)
 			subj = ev.target.value
 			jf.update_in(state, path, (_) -> (if subj == "" then false else subj))
+	new_datepairval: (state) ->
+		utils = @
+		console.log("new datepairval")
+		state.datepairval.date.start = $('#datepair .date.start').datepicker('getDate')
+		state.datepairval.date.end = $('#datepair .date.end').datepicker('getDate')
+		state.datepairval.time.start = $('#datepair .time.start').timepicker('getTime')
+		state.datepairval.time.end = $('#datepair .time.end').timepicker('getTime')
