@@ -1,0 +1,52 @@
+- var utils = locals.utils
+- var state = locals.state
+- var optionlg = "form-control input-lg text-center noborder"
+mixin swapbutton(name, path, style)
+	if state.data && state.data.enabled
+		button.btn.btn-success(class=style onClick=utils.view_swap(state, path))= name
+	else
+		button.btn.btn-default(class=style onClick=utils.view_swap(state, path))= name
+mixin selectitems(list, path, dict)
+	- var currentval = utils.jf.get_in(state, path)
+	- var this_val = list.filter(function(el){return (el == currentval);})[0]
+	- var placeholder = ((this_val == currentval) ? dict[this_val] : "ничего не выбрано")
+	select.selectpicker.form-control(onChange=utils.view_set(state, path) data-live-search="true" title=placeholder)
+		each el in list
+			option(key=el value=el)= dict[el]
+mixin selectitems_multiple(list, path, dict)
+	- var currentval = utils.jf.get_in(state, path)
+	- var this_val = (currentval ? currentval : []).map(function(el){return el.toString();})
+	select.selectpicker.form-control(multiple onChange=utils.multiple_select(state, path) data-live-search="true" defaultValue=this_val)
+		each el in list
+			option(key=el value=el)= dict[el]
+mixin fileinput(path)
+	div.btn.btn-default.btn-lg.btn-file.fill Browse or drag and drop files
+		input(type="file" multiple="true" onChange=utils.view_files(state, path))
+mixin select_room_location()
+	div.btn-group.ml.mt
+		- var defval = "все базы"
+		- var title = (state.ids.location ? state.response_state.locations.filter(function(el){return el.id.compare(state.ids.location) == 0;})[0].name : defval)
+		select.selectpicker.form-control.input-lg(onChange=utils.set_location(state) title=title data-live-search="true")
+			each el in state.response_state.locations.concat({id: "", name: defval})
+				option(key="select_room_location"+el.id+"location" class=optionlg value=el.id)= el.name
+	if state.ids.location
+		- var rooms = state.response_state.rooms.filter(function(el){return el.location_id.compare(state.ids.location) == 0;})
+		- var defval = "все комнаты"
+		- var title = (state.ids.room ? rooms.filter(function(el){return el.id.compare(state.ids.room) == 0;})[0].name : defval)
+		div.btn-group.ml.mt
+			select.selectpicker.form-control.input-lg(onChange=utils.set_room(state, ["ids","room"]) title=title data-live-search="true")
+				each el in rooms.concat({id: "", name: defval})
+					option(key="select_room_location"+el.id+"room" class=optionlg value=el.id style=(el.color ? "backgroundColor:"+el.color : ""))= el.name
+mixin navbar()
+	div.container-fluid
+		div.row.text-center
+			+select_room_location()
+mixin main()
+	div.container-fluid
+		div.row.mt
+			div.col-xs-12
+//
+//	CONTENT
+//
++navbar()
++main()
