@@ -35,10 +35,40 @@ module.exports =
 		if (ev? and ev.target? and ev.target.value?)
 			subj = ev.target.value
 			jf.update_in(state, path, (_) -> (if subj == "" then false else subj))
+	maybedate2moment: (some) ->
+		if some then moment(some) else null
 	new_datepairval: (state) ->
 		utils = @
 		console.log("new datepairval")
-		state.datepairval.date.start = $('#datepair .date.start').datepicker('getDate')
-		state.datepairval.date.end = $('#datepair .date.end').datepicker('getDate')
-		state.datepairval.time.start = $('#datepair .time.start').timepicker('getTime')
-		state.datepairval.time.end = $('#datepair .time.end').timepicker('getTime')
+		state.datepairval.date.start = utils.maybedate2moment($('#datepair .date.start').datepicker('getDate'))
+		state.datepairval.date.end = utils.maybedate2moment($('#datepair .date.end').datepicker('getDate'))
+		state.datepairval.time.start = utils.maybedate2moment($('#datepair .time.start').timepicker('getTime'))
+		state.datepairval.time.end = utils.maybedate2moment($('#datepair .time.end').timepicker('getTime'))
+	get_hours_list: (moment) ->
+		[9..24].map((el) -> moment.clone().hour(el))
+	get_days_list: (sessions, state) ->
+		utils = @
+		switch sessions.length
+			when 0 then []
+			else
+				{max: max, min: min} = jf.reduce(sessions, {max: sessions[0].time_from, min: sessions[0].time_from}, (el, acc) ->
+					if (el.time_from.compare(acc.min) == -1) then acc.min = el.time_from
+					if (el.time_from.compare(acc.max) == 1) then acc.max = el.time_from
+					acc)
+				utils.get_moments_range((if state.datepairval.date.start then state.datepairval.date.start else moment(min * 1000)), (if state.datepairval.date.end then state.datepairval.date.end else moment(max * 1000)), [])
+	moment2wd: (moment) ->
+		wd = moment.day()
+		if (wd == 0) then "WD_7" else ("WD_"+wd)
+	get_moments_range: (min_o, max_o, acc) ->
+		utils = @
+		min = min_o.clone()
+		max = max_o.clone()
+		pd = "YYYY-MM-DD"
+		if (min.format(pd) == max.format(pd))
+			acc.concat([min])
+		else
+			utils.get_moments_range(min.clone().add(1,'d'), max, acc.concat([min]))
+	get_locations: (state) ->
+		if state.ids.location then state.response_state.locations.filter((el) -> el.id.compare(state.ids.location) == 0) else state.response_state.locations
+	get_rooms: (state, location) ->
+		(if state.ids.room then state.response_state.rooms.filter((el) -> el.id.compare(state.ids.room) == 0) else state.response_state.rooms).filter((el) -> el.location_id.compare(location.id) == 0)
