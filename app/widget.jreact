@@ -46,7 +46,13 @@ mixin navbar()
 				input.form-control.input-lg.ml.mt.time.end(type="text" placeholder="время окончания")
 				input.form-control.input-lg.ml.mt.date.end(type="text" placeholder="дата окончания")
 				+select_room_location()
-mixin location_content(location)
+mixin timeline(hours, room)
+	table.table.table-hover.table-condensed.table-bordered.noborder.text-left
+		tbody
+			tr
+				each h in hours
+					td= h.get('hour')
+mixin location_content(location, moment)
 	- var rooms = utils.get_rooms(state, location)
 	table.table.table-hover.table-condensed.text-center.noborder(class=((rooms.length > 1) ? "table-bordered" : ""))
 		tbody
@@ -55,13 +61,9 @@ mixin location_content(location)
 					if (rooms.length > 1)
 						td(style="backgroundColor:"+room.color)
 							div.deg90.nowrapword= " "+room.name+" "
-					td.fill
-						//
-						//	TODO table cells of time instead PB
-						//
-						//div.progress
-						//	div.progress-bar.progress-bar-striped.active(role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%")
-mixin location_table()
+					td.fill.no-bleft
+						+timeline(utils.get_hours_list(moment), room)
+mixin location_table(moment)
 	- var locations = utils.get_locations(state)
 	table.table.table-hover.table-condensed.text-center.noborder(class=((locations.length > 1) ? "table-bordered" : ""))
 		tbody
@@ -71,7 +73,7 @@ mixin location_table()
 						td
 							div.deg90.nowrapword= " "+location.name+" "
 					td.fill.no-bleft
-						+location_content(location)
+						+location_content(location, moment)
 mixin main()
 	if state.response_state
 		div.container-fluid.mt
@@ -84,7 +86,7 @@ mixin main()
 								td
 									div.deg90.nowrapword= " "+moment.format('YYYY-MM-DD')+" "+state.verbose.week_days[utils.moment2wd(moment)]+" "
 							td.fill.no-bleft
-								+location_table()
+								+location_table(moment)
 //
 //	CONTENT
 //
