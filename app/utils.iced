@@ -9,7 +9,9 @@ module.exports =
 			subj = ev.target.value
 			jf.put_in(state, path, subj)
 	view_put: (state, path, data) ->
+		utils = @
 		jf.put_in(state, path, data)
+		await utils.render(defer dummy)
 	view_swap: (state, path) ->
 		jf.update_in(state, path, (bool) -> not(bool))
 	view_files: (state, path, ev) ->
@@ -30,6 +32,25 @@ module.exports =
 			state.ids.room = false
 			await utils.render(defer dummy)
 			jf.update_in(state, ["ids","location"], (_) -> (if subj == "" then false else subj))
+	table_set_location: (state, id) ->
+		utils = @
+		state.ids.location = false
+		state.ids.room = false
+		await utils.render(defer dummy)
+		jf.update_in(state, ["ids","location"], (_) -> id)
+		$("#location_selectpicker").val(id.toString())
+		$("#location_selectpicker").selectpicker('refresh')
+	table_set_room: (state, room) ->
+		utils = @
+		state.ids.location = false
+		state.ids.room = false
+		await utils.render(defer dummy)
+		utils.table_set_location(state, room.location_id)
+		await utils.render(defer dummy)
+		jf.update_in(state, ["ids","room"], (_) -> room.id)
+		$("#room_selectpicker").val(room.id.toString())
+		$("#room_selectpicker").selectpicker('refresh')
+		await utils.render(defer dummy)
 	set_room: (state, path, ev) ->
 		utils = @
 		if (ev? and ev.target? and ev.target.value?)
@@ -44,8 +65,15 @@ module.exports =
 		state.datepairval.date.end = utils.maybedate2moment($('#datepair .date.end').datepicker('getDate'))
 		state.datepairval.time.start = utils.maybedate2moment($('#datepair .time.start').timepicker('getTime'))
 		state.datepairval.time.end = utils.maybedate2moment($('#datepair .time.end').timepicker('getTime'))
-	get_hours_list: (moment) ->
-		[9..24].map((el) -> moment.clone().hour(el))
+	check_time_cell: (mm, room, state) ->
+		state.response_state.sessions.some((s) -> mm.isBetween(moment(s.time_from * 1000), moment(s.time_to * 1000), null, "[)") and (room.id.compare(s.room_id) == 0))
+	get_hours_list: (moment, state) ->
+		ts = state.datepairval.time.start
+		te = state.datepairval.time.end
+		min = (if ts then ts.get('hour') else 9)
+		max = (if te then te.get('hour') else 24)
+		max = (if (max == 0) then 24 else max)
+		[Math.min(min,max)..Math.max(min,max)].map((el) -> moment.clone().hour(el))
 	get_days_list: (sessions, state) ->
 		utils = @
 		switch sessions.length
@@ -72,3 +100,8 @@ module.exports =
 		if state.ids.location then state.response_state.locations.filter((el) -> el.id.compare(state.ids.location) == 0) else state.response_state.locations
 	get_rooms: (state, location) ->
 		(if state.ids.room then state.response_state.rooms.filter((el) -> el.id.compare(state.ids.room) == 0) else state.response_state.rooms).filter((el) -> el.location_id.compare(location.id) == 0)
+	table_set_date: (moment) ->
+		utils = @
+		$('#datepair .date.start').datepicker('setDate', moment.toDate())
+		$('#datepair .date.end').datepicker('setDate', moment.toDate())
+		await utils.render(defer dummy)
