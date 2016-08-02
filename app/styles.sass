@@ -99,7 +99,7 @@ div
 			border-radius: 6px
 .noborder
 	border-radius: 0
-	border: 0
+	border: 0 !important
 .hidden
 	display:  none !important
 .deg90
@@ -120,12 +120,18 @@ div
 	-webkit-writing-mode: vertical-rl
 	-ms-writing-mode: tb-rl
 	writing-mode: vertical-rl
-.bigtxt
-	font-size: 2em
 .nowrapword
-	white-space: nowrap
-	text-align: justify
-.fillh
-	height: 100%
-.table th, .table td
+	white-space: pre
+	display: inline-block
+.table td, .table tr
 	border-top: none !important
+td, tr
+	margin: 0 !important
+	padding: 0 !important
+	border-top: none !important
+	border-right: none !important
+table
+	border-collapse: collapse !important
+	border-spacing: 0px !important
+.no-bleft
+	border-left: none !important

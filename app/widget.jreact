@@ -48,13 +48,13 @@ mixin navbar()
 				+select_room_location()
 mixin location_content(location)
 	- var rooms = utils.get_rooms(state, location)
-	table.table.table-hover.table-condensed.text-center(class=((rooms.length > 1) ? "table-bordered" : ""))
+	table.table.table-hover.table-condensed.text-center.noborder(class=((rooms.length > 1) ? "table-bordered" : ""))
 		tbody
 			each room in rooms
 				tr
 					if (rooms.length > 1)
 						td(style="backgroundColor:"+room.color)
-							div.deg90.bigtxt= room.name
+							div.deg90.nowrapword= " "+room.name+" "
 					td.fill
 						//
 						//	TODO table cells of time instead PB
@@ -63,14 +63,14 @@ mixin location_content(location)
 						//	div.progress-bar.progress-bar-striped.active(role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%")
 mixin location_table()
 	- var locations = utils.get_locations(state)
-	table.table.table-hover.table-condensed.text-center(class=((locations.length > 1) ? "table-bordered" : ""))
+	table.table.table-hover.table-condensed.text-center.noborder(class=((locations.length > 1) ? "table-bordered" : ""))
 		tbody
 			each location in locations
 				tr
 					if (locations.length > 1)
 						td
-							div.deg90.bigtxt.nowrapword= location.name
-					td.fill
+							div.deg90.nowrapword= " "+location.name+" "
+					td.fill.no-bleft
 						+location_content(location)
 mixin main()
 	if state.response_state
@@ -82,8 +82,8 @@ mixin main()
 						tr
 							if (days.length > 1)
 								td
-									div.deg90.bigtxt.nowrapword= moment.format('YYYY-MM-DD')+" "+state.verbose.week_days[utils.moment2wd(moment)]
-							td.fill
+									div.deg90.nowrapword= " "+moment.format('YYYY-MM-DD')+" "+state.verbose.week_days[utils.moment2wd(moment)]+" "
+							td.fill.no-bleft
 								+location_table()
 //
 //	CONTENT
