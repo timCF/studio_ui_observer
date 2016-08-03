@@ -2,7 +2,7 @@ document.addEventListener "DOMContentLoaded", (e) ->
 	jf = require('jsfunky')
 	timepicker_opts = {
 		minTime: "9:00",
-		maxTime: "24:00",
+		maxTime: "23:00",
 		timeFormat: 'H:i',
 		disableTextInput: true,
 		disableTouchKeyboard: true,
@@ -46,7 +46,7 @@ document.addEventListener "DOMContentLoaded", (e) ->
 		if not(state.datepair) and datepair
 			$('#datepair .time').timepicker(timepicker_opts)
 			$('#datepair .date').datepicker(datepicker_opts)
-			state.datepair = new Datepair(datepair, {defaultTimeDelta: 10800000, defaultDateDelta: 7})
+			state.datepair = new Datepair(datepair, {defaultTimeDelta: 10800000, defaultDateDelta: 32})
 			$('#datepair').on('rangeSelected', () -> utils.new_datepairval(state))
 			$('#datepair').on('rangeError', () -> utils.new_datepairval(state))
 			$('#datepair').on('rangeIncomplete', () -> utils.new_datepairval(state))
@@ -89,6 +89,7 @@ document.addEventListener "DOMContentLoaded", (e) ->
 		ids: {
 			location: false,
 			room: false,
+			week_days: []
 		},
 		verbose: require("verbose")
 	}

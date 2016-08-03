@@ -71,7 +71,7 @@ module.exports =
 		ts = state.datepairval.time.start
 		te = state.datepairval.time.end
 		min = (if ts then ts.get('hour') else 9)
-		max = (if te then te.get('hour') else 24)
+		max = (if te then te.get('hour') else 23)
 		max = (if (max == 0) then 24 else max)
 		[Math.min(min,max)..Math.max(min,max)].map((el) -> moment.clone().hour(el))
 	get_days_list: (sessions, state) ->
@@ -83,7 +83,8 @@ module.exports =
 					if (el.time_from.compare(acc.min) == -1) then acc.min = el.time_from
 					if (el.time_from.compare(acc.max) == 1) then acc.max = el.time_from
 					acc)
-				utils.get_moments_range((if state.datepairval.date.start then state.datepairval.date.start else moment(min * 1000)), (if state.datepairval.date.end then state.datepairval.date.end else moment(max * 1000)), [])
+				moments = utils.get_moments_range((if state.datepairval.date.start then state.datepairval.date.start else moment(min * 1000)), (if state.datepairval.date.end then state.datepairval.date.end else moment(max * 1000)), [])
+				if (state.ids.week_days.length == 0) then moments else moments.filter((el) -> state.ids.week_days.indexOf(utils.moment2wd(el)) != -1)
 	moment2wd: (moment) ->
 		wd = moment.day()
 		if (wd == 0) then "WD_7" else ("WD_"+wd)

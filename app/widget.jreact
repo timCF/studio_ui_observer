@@ -10,15 +10,15 @@ mixin selectitems(list, path, dict)
 	- var currentval = utils.jf.get_in(state, path)
 	- var this_val = list.filter(function(el){return (el == currentval);})[0]
 	- var placeholder = ((this_val == currentval) ? dict[this_val] : "ничего не выбрано")
-	select.selectpicker.form-control(onChange=utils.view_set(state, path) data-live-search="true" title=placeholder)
+	select.selectpicker.form-control.input-lg(onChange=utils.view_set(state, path) data-live-search="true" title=placeholder)
 		each el in list
-			option(key=el value=el)= dict[el]
-mixin selectitems_multiple(list, path, dict)
+			option(key=el value=el class=optionlg)= dict[el]
+mixin selectitems_multiple(list, path, dict, placeholder)
 	- var currentval = utils.jf.get_in(state, path)
 	- var this_val = (currentval ? currentval : []).map(function(el){return el.toString();})
-	select.selectpicker.form-control(multiple onChange=utils.multiple_select(state, path) data-live-search="true" defaultValue=this_val)
+	select.selectpicker.form-control.input-lg(multiple onChange=utils.multiple_select(state, path) data-live-search="true" defaultValue=this_val title=placeholder)
 		each el in list
-			option(key=el value=el)= dict[el]
+			option(key=el value=el class=optionlg)= dict[el]
 mixin fileinput(path)
 	div.btn.btn-default.btn-lg.btn-file.fill Browse or drag and drop files
 		input(type="file" multiple="true" onChange=utils.view_files(state, path))
@@ -41,36 +41,43 @@ mixin navbar()
 	div.container-fluid
 		div.row.text-center
 			div.form-inline(id="datepair")
-				input.form-control.input-lg.ml.mt.date.start(type="text" placeholder="дата начала")
-				input.form-control.input-lg.ml.mt.time.start(type="text" placeholder="время начала")
-				input.form-control.input-lg.ml.mt.time.end(type="text" placeholder="время окончания")
-				input.form-control.input-lg.ml.mt.date.end(type="text" placeholder="дата окончания")
+				div.btn-group.ml.mt.staticform
+					input.form-control.input-lg.date.start(type="text" placeholder="дата начала")
+				div.btn-group.ml.mt.staticform
+					input.form-control.input-lg.time.start(type="text" placeholder="время начала")
+				div.btn-group.ml.mt.staticform
+					input.form-control.input-lg.time.end(type="text" placeholder="время окончания")
+				div.btn-group.ml.mt.staticform
+					input.form-control.input-lg.date.end(type="text" placeholder="дата окончания")
+				div.btn-group.ml.mt.staticform
+					+selectitems_multiple(["WD_1","WD_2","WD_3","WD_4","WD_5","WD_6","WD_7"], ["ids","week_days"], state.verbose.week_days, "день недели")
 				+select_room_location()
 mixin timeline(hours, room)
-	table.table.table-hover.table-condensed.table-bordered.noborder.text-left
+	table.table.table-condensed.table-bordered.noborder.text-left
 		tbody
 			tr
 				each h in hours
 					td(style=(utils.check_time_cell(h, room, state) ? ("backgroundColor:"+room.color) : ""))= h.get('hour')
 mixin location_content(location, moment)
 	- var rooms = utils.get_rooms(state, location)
-	table.table.table-hover.table-condensed.text-center.noborder(class=((rooms.length > 1) ? "table-bordered" : ""))
+	table.table.table-condensed.text-center.noborder(class=((rooms.length > 1) ? "table-bordered" : ""))
 		tbody
 			each room in rooms
-				tr
+				- var color = "backgroundColor:"+net.brehaut.Color(room.color).setAlpha(0.3).toString()
+				tr(style=color)
 					if (rooms.length > 1)
-						td.cpointer(style="backgroundColor:"+room.color onClick=utils.table_set_room(state, room))
+						td.btn-default.cpointer(onClick=utils.table_set_room(state, room) style=color)
 							div.deg90.nowrapword= " "+room.name+" "
 					td.fill.no-bleft
 						+timeline(utils.get_hours_list(moment, state), room)
 mixin location_table(moment)
 	- var locations = utils.get_locations(state)
-	table.table.table-hover.table-condensed.text-center.noborder(class=((locations.length > 1) ? "table-bordered" : ""))
+	table.table.table-condensed.text-center.noborder(class=((locations.length > 1) ? "table-bordered" : ""))
 		tbody
 			each location in locations
 				tr
 					if (locations.length > 1)
-						td.cpointer(onClick=utils.table_set_location(state, location.id))
+						td.btn-default.cpointer(onClick=utils.table_set_location(state, location.id))
 							div.deg90.nowrapword= " "+location.name+" "
 					td.fill.no-bleft
 						+location_content(location, moment)
@@ -78,12 +85,12 @@ mixin main()
 	if state.response_state
 		div.container-fluid.mt
 			- var days = utils.get_days_list( state.response_state.sessions, state )
-			table.table.table-hover.table-condensed.text-center(class=((days.length > 1) ? "table-bordered" : ""))
+			table.table.table-condensed.text-center(class=((days.length > 1) ? "table-bordered" : ""))
 				tbody
 					each moment in days
 						tr
 							if (days.length > 1)
-								td.cpointer(onClick=utils.table_set_date(moment))
+								td.btn-default.cpointer(onClick=utils.table_set_date(moment))
 									div.deg90.nowrapword= " "+moment.format('YYYY-MM-DD')+" "+state.verbose.week_days[utils.moment2wd(moment)]+" "
 							td.fill.no-bleft
 								+location_table(moment)

@@ -19,7 +19,7 @@ module.exports = (utils, state) ->
 		bullet.send( utils.encode_proto(data) )
 	utils.bullet.onopen = () ->
 		utils.CMD_get_state()
-		utils.notice("соединение с сервером установлено")
+		#utils.notice("соединение с сервером установлено")
 	utils.bullet.ondisconnect = () -> utils.error("соединение с сервером потеряно")
 	utils.bullet.onclose = () -> utils.warn("соединение с сервером закрыто")
 	utils.bullet.onheartbeat = () -> utils.to_server(newmsg())
