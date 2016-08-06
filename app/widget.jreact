@@ -57,7 +57,7 @@ mixin timeline(hours, room)
 		tbody
 			tr
 				each h in hours
-					td(style=(utils.check_time_cell(h, room, state) ? ("backgroundColor:"+room.color) : ""))= h.get('hour')
+					td(style=(utils.check_time_cell(h, room, state) ? ("backgroundColor:"+room.color) : ""))= h.get('hour')+":00"
 mixin location_content(location, moment)
 	- var rooms = utils.get_rooms(state, location)
 	table.table.table-condensed.text-center.noborder(class=((rooms.length > 1) ? "table-bordered" : ""))
