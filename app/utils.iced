@@ -66,7 +66,7 @@ module.exports =
 		state.datepairval.time.start = utils.maybedate2moment($('#datepair .time.start').timepicker('getTime'))
 		state.datepairval.time.end = utils.maybedate2moment($('#datepair .time.end').timepicker('getTime'))
 	check_time_cell: (mm, room, state) ->
-		state.response_state.sessions.some((s) -> mm.isBetween(moment(s.time_from * 1000), moment(s.time_to * 1000), null, "[)") and (room.id.compare(s.room_id) == 0))
+		state.response_state.sessions.some((s) -> (room.id.compare(s.room_id) == 0) and mm.isBetween(moment(s.time_from * 1000), moment(s.time_to * 1000), null, "[)"))
 	get_hours_list: (moment, state) ->
 		ts = state.datepairval.time.start
 		te = state.datepairval.time.end
