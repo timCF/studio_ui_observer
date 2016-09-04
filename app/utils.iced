@@ -79,11 +79,7 @@ module.exports =
 		switch sessions.length
 			when 0 then []
 			else
-				{max: max, min: min} = jf.reduce(sessions, {max: sessions[0].time_from, min: sessions[0].time_from}, (el, acc) ->
-					if (el.time_from.compare(acc.min) == -1) then acc.min = el.time_from
-					if (el.time_from.compare(acc.max) == 1) then acc.max = el.time_from
-					acc)
-				moments = utils.get_moments_range((if state.datepairval.date.start then state.datepairval.date.start else moment(min * 1000)), (if state.datepairval.date.end then state.datepairval.date.end else moment(max * 1000)), [])
+				moments = utils.get_moments_range(state.datepairval.date.start, state.datepairval.date.end, [])
 				if (state.ids.week_days.length == 0) then moments else moments.filter((el) -> state.ids.week_days.indexOf(utils.moment2wd(el)) != -1)
 	moment2wd: (moment) ->
 		wd = moment.day()

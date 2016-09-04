@@ -46,7 +46,7 @@ document.addEventListener "DOMContentLoaded", (e) ->
 		if not(state.datepair) and datepair
 			$('#datepair .time').timepicker(timepicker_opts)
 			$('#datepair .date').datepicker(datepicker_opts)
-			state.datepair = new Datepair(datepair, {defaultTimeDelta: 10800000, defaultDateDelta: 32})
+			state.datepair = new Datepair(datepair, {defaultTimeDelta: 10800000, defaultDateDelta: 7})
 			$('#datepair').on('rangeSelected', () -> utils.new_datepairval(state))
 			$('#datepair').on('rangeError', () -> utils.new_datepairval(state))
 			$('#datepair').on('rangeIncomplete', () -> utils.new_datepairval(state))
@@ -83,7 +83,7 @@ document.addEventListener "DOMContentLoaded", (e) ->
 		response_state: false,
 		datepair: false,
 		datepairval: {
-			date: {start: '', end: ''},
+			date: {start: moment(), end: moment().add(7, 'days')},
 			time: {start: '', end: ''}
 		},
 		ids: {
